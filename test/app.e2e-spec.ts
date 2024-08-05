@@ -48,6 +48,7 @@ describe('AppController (e2e)', () => {
       data: {
         privacy: 'public',
         xyz: 'asasas',
+        abc: 'asasas',
       },
     };
 

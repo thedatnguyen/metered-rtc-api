@@ -54,17 +54,13 @@ export class RoomService {
         result = apiRes.data;
       })
       .catch((err: AxiosError) => {
-        console.log(err.response.data['error']['details']);
         throw err;
       });
     return result;
   };
 
   updateRoom = async (roomName: string, room: Room) => {
-    const result = {
-      data: undefined,
-      error: undefined,
-    };
+    let result;
 
     const options = {
       method: 'PUT',
@@ -81,11 +77,10 @@ export class RoomService {
     await axios
       .request(options)
       .then((apiRes: AxiosResponse) => {
-        result.data = apiRes.data;
+        result = apiRes.data;
       })
       .catch((err: AxiosError) => {
-        result.error = err.message;
-        console.log(result.error);
+        throw err;
       });
     return result;
   };

@@ -32,6 +32,8 @@ export class CustomException implements ExceptionFilter {
       exceptionResponse.detail = exception.cause.toString();
     }
 
+    if (status === 500) console.log(exception);
+    // console.log(exception);
     response.status(status).json(exceptionResponse);
   }
 }
