@@ -1,5 +1,9 @@
+// import { preventUnacceptProperties } from '../../common/utils/validate.utils';
+// import { PreventUnacceptableProperty } from 'src/common/decorators/validate.decorators';
 export class Room {
   constructor(obj: unknown) {
+    // preventUnacceptProperties(this, obj);
+    // @PreventUnacceptableProperty(this, obj);
     Object.assign(this, obj);
   }
   //If not specified the room name will be auto-generated.

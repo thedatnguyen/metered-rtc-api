@@ -25,15 +25,28 @@ export class CustomException implements ExceptionFilter {
     if (exception instanceof AxiosError) {
       status = exception.response.status;
       exceptionResponse.statusCode = status;
-      exceptionResponse.detail = exception.response.data['error']['details'];
+      exceptionResponse.detail = { ...exception.response.data };
     } else if (exception instanceof HttpException) {
       status = exception.getStatus();
       exceptionResponse.statusCode = status;
-      exceptionResponse.detail = exception.cause.toString();
+      switch (status) {
+        case 400: {
+          exceptionResponse.detail = 'Not Found';
+          break;
+        }
+        case 500: {
+          exceptionResponse.detail = 'Internal Server Error';
+          break;
+        }
+        default: {
+          exceptionResponse.detail = exception.cause
+            ? exception.cause.toString()
+            : undefined;
+        }
+      }
     }
 
     if (status === 500) console.log(exception);
-    // console.log(exception);
     response.status(status).json(exceptionResponse);
   }
 }

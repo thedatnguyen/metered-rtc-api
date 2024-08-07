@@ -6,42 +6,34 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
 export class TokenService {
   constructor() {}
 
-  generateToken = async (token: Token) => {
-    const result = {
-      token: undefined,
-      error: undefined,
-    };
-
+  generateToken = async (tokenData: Token) => {
+    let token: string;
     const option = {
       method: 'POST',
-      url: `https://${process.env.METERED_DOMAIN}/api/v1/rooms`,
+      url: `https://${process.env.METERED_DOMAIN}/api/v1/token`,
       params: {
         secretKey: process.env.METERED_SECRET_KEY,
       },
       headers: {
         Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
-      data: token,
+      data: tokenData,
     };
 
     await axios
       .request(option)
       .then((apiRes: AxiosResponse) => {
-        result.token = apiRes.data.token;
+        token = apiRes.data.token;
       })
       .catch((err: AxiosError) => {
-        console.log(err.message);
-        result.error = err.message;
+        throw err;
       });
-    return result;
+    return token;
   };
 
   validateToken = async (token: string) => {
-    const result = {
-      data: undefined,
-      error: undefined,
-    };
-
+    let result: any;
     const options = {
       method: 'POST',
       url: `https://${process.env.METERED_DOMAIN}/api/v1/token/validate`,
@@ -59,11 +51,10 @@ export class TokenService {
     await axios
       .request(options)
       .then((apiRes: AxiosResponse) => {
-        result.data = apiRes.data;
+        result = apiRes.data;
       })
       .catch((err: AxiosError) => {
-        console.log(err.message);
-        result.error = err.message;
+        throw err;
       });
     return result;
   };

@@ -20,7 +20,7 @@ export class CustomValidationPipe extends ValidationPipe {
       return value;
     }
     const obj = plainToInstance(metadata.metatype, value);
-    const errors: ValidationError[] = await validate(obj, {});
+    const errors: ValidationError[] = await validate(obj);
     if (errors.length) {
       console.log(errors[0]);
       throw new HttpException('Bad request', HttpStatus.BAD_REQUEST, {

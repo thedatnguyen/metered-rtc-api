@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  HttpCode,
+  Param,
+  Post,
+  Put,
+  Get,
+} from '@nestjs/common';
 import { RoomService } from './room.service';
 import { Room } from './room.dto';
 
@@ -7,6 +16,10 @@ export class RoomController {
   constructor() {}
   private readonly service = new RoomService();
 
+  @Get()
+  async getAllRooms() {
+    return await this.service.getAllRooms();
+  }
   @Post()
   async createNewRoom(@Body() room: Room) {
     room = new Room(room);
@@ -15,15 +28,19 @@ export class RoomController {
 
   @Put(':roomName')
   async updateRoom(@Body() room: Room, @Param('roomName') roomName: string) {
-    const { data, error } = await this.service.updateRoom(roomName, room);
-    if (data) return { success: true, ...data };
-    return { success: false, error };
+    return await this.service.updateRoom(roomName, room);
   }
 
   @Delete(':roomName')
+  @HttpCode(204)
   async deleteRoom(@Param('roomName') roomName: string) {
-    const { data, error } = await this.service.deleteRoom(roomName);
-    if (data) return { success: true, ...data };
-    return { success: false, error };
+    await this.service.deleteRoom(roomName);
+    return { roomName };
+  }
+
+  @Delete('/delete/all')
+  @HttpCode(204)
+  async deleteAllRooms() {
+    return await this.service.deleteAllRooms();
   }
 }

@@ -7,11 +7,7 @@ export class RoomService {
   constructor() {}
 
   getAllRooms = async () => {
-    const result = {
-      data: undefined,
-      error: undefined,
-    };
-
+    let rooms: Room[];
     const options = {
       method: 'GET',
       url: `https://${process.env.METERED_DOMAIN}/api/v1/rooms`,
@@ -26,13 +22,19 @@ export class RoomService {
     await axios
       .request(options)
       .then((apiRes: AxiosResponse) => {
-        result.data = apiRes.data;
+        rooms = apiRes.data;
       })
       .catch((err: AxiosError) => {
-        console.log(err.message);
-        result.error = err.message;
+        console.log(err.response.data);
+        throw err;
       });
-    return result;
+    return {
+      count: rooms.length,
+      rooms: rooms.reduce((r, room: Room) => {
+        r[room.roomName] = room;
+        return r;
+      }, {}),
+    };
   };
 
   createNewRoom = async (room: Room) => {
@@ -60,7 +62,7 @@ export class RoomService {
   };
 
   updateRoom = async (roomName: string, room: Room) => {
-    let result;
+    let result: Room;
 
     const options = {
       method: 'PUT',
@@ -86,10 +88,6 @@ export class RoomService {
   };
 
   deleteRoom = async (roomName: string) => {
-    const result = {
-      data: undefined,
-      error: undefined,
-    };
     const options = {
       method: 'DELETE',
       url: `https://${process.env.METERED_DOMAIN}/api/v1/room/${roomName}`,
@@ -100,15 +98,21 @@ export class RoomService {
         Accept: 'application/json',
       },
     };
-    await axios
-      .request(options)
-      .then(() => {
-        result.data = roomName;
-      })
-      .catch((err: AxiosError) => {
-        result.error = err.message;
-        console.log(err.message);
-      });
-    return result;
+    await axios.request(options).catch((err: AxiosError) => {
+      throw err;
+    });
+    return roomName;
+  };
+
+  deleteAllRooms = async () => {
+    try {
+      const rooms = (await this.getAllRooms()).rooms;
+      const roomNames = Object.keys(rooms);
+      console.log(roomNames);
+      await Promise.all(roomNames.map((roomName) => this.deleteRoom(roomName)));
+      return roomNames;
+    } catch (error) {
+      console.log(error);
+    }
   };
 }

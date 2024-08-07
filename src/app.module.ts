@@ -1,7 +1,7 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AppLoggerMiddleware } from './utils/logger';
+import { AppLoggerMiddleware } from './common/utils/logger';
 import { DomainKeyCheckMiddleware } from './middlewares/domain-key-check.middleware.ts';
 import { AuthModule } from './modules/auth/auth.module';
 import { RoomModule } from './modules/room/room.module';
